@@ -2,6 +2,7 @@ package ProjetMorphologieAlgo;
 
 
 import java.io.*;
+import java.util.List;
 import java.util.Set;
 
 public class TraitementTextuel {
@@ -29,51 +30,24 @@ public class TraitementTextuel {
         
         System.out.println("\n=== Début des transformations ===");
         
-        // 2. Parcourir l'arbre
-        parcourirNoeuds(arbre.getRoot(), table);
+        
     }
+ 
     
-    // Parcours récursif de l'arbre
-    private static void parcourirNoeuds(ABRNode noeud, HashTable table) {
-        if (noeud == null) return;
-        
-        // Parcours en ordre (gauche, racine, droite)
-        parcourirNoeuds(noeud.left, table);
-        
-        // Traiter le verbe courant
-        traiterVerbe(noeud.racine.getLettres(), table);
-        
-        parcourirNoeuds(noeud.right, table);
-    }
+   
+ 
     
-    // Appliquer tous les schèmes à un verbe
-    private static void traiterVerbe(String verbe, HashTable table) {
-        System.out.println("\n--- Verbe: " + verbe + " ---");
-        
-        // Récupérer les schèmes depuis la HashMap
-        // Il faut ajouter une méthode dans HashTable pour obtenir les clés
-        
-        // Version avec Set<String>
-        Set<String> schemes = table.getSchemes();
-        if (schemes == null || schemes.isEmpty()) {
-            System.out.println("Aucun schème disponible dans la table!");
-            return;
-        }
-        
-        for (String scheme : schemes) {
-            try {
-                String transformation = table.transformer(verbe, scheme);
-                System.out.println(scheme + ": " + transformation);
-            } catch (Exception e) {
-                System.out.println(scheme + ": transformation impossible");
-            }
-        }
-    }
     
     // Point d'entrée
     public static void main(String[] args) {
         // Chemin spécifique à votre projet
     	 String cheminFichier = "C:\\Users\\qsqsq\\OneDrive\\Bureau\\ProjetAlgo\\ProjetMorphologie\\src\\ProjetMorphologieAlgo\\verbes.txt";
         traiterFichier(cheminFichier);
+        String verbe = "كتب";
+        String[] mesSchemes = {"فاعل", "مفعول", "غيرموجود"}; // inclut un schème qui n'existe pas
+        HashTable ht = new HashTable();
+
+        List<String> formes = ht.transformer(verbe, mesSchemes);
+        System.out.println("Formes dérivées : " + formes);
     }
 }
