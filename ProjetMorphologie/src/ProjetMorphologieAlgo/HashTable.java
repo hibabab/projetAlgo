@@ -49,8 +49,7 @@ public class HashTable {
     	    reglesIstafal.add("اV[0]تV[1]V[2]"); // istaf'ala
     	    // Note: Même structure que افتعل mais avec sens différent
     	    // Pour différencier, on pourrait ajouter une variante
-    	    reglesIstafal.add("استV[0]V[1]V[2]"); // istaf'ala
-    	    table.put("استفعل", reglesIstafal);
+    	   
     	    
     	    // Schème تفاعل (réciproque)
     	    List<String> reglesTafaal = new ArrayList<>();
@@ -142,4 +141,35 @@ public class HashTable {
     public Set<String> getSchemes() {
         return table.keySet();
     }
+ // Transformer un verbe selon plusieurs schèmes
+ // schemes : tableau ou liste de noms de schèmes
+ // Retourne une liste de toutes les formes valides
+ public List<String> transformer(String verbe, String[] schemes) {
+     List<String> resultats = new ArrayList<>();
+
+     // Convertir le verbe en tableau de caractères
+     char[] radicales = verbe.toCharArray();
+
+     for (String scheme : schemes) {
+         // Vérifier si le schème existe dans la table
+         if (table.containsKey(scheme)) {
+             List<String> regles = table.get(scheme);
+
+             // Appliquer toutes les règles du schème
+             for (String regle : regles) {
+                 String resultat = regle
+                     .replace("V[0]", String.valueOf(radicales[0]))
+                     .replace("V[1]", String.valueOf(radicales[1]))
+                     .replace("V[2]", String.valueOf(radicales[2]));
+                 resultats.add(resultat);
+             }
+         } else {
+             System.out.println("Schème non trouvé : " + scheme);
+         }
+     }
+
+     return resultats;
+ }
+
     }
+
