@@ -1,53 +1,103 @@
 package ProjetMorphologieAlgo;
 
-
-import java.io.*;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 public class TraitementTextuel {
     
-    public static void traiterFichier(String nomFichier) {
-        // Initialiser structures
-        ABRTree arbre = new ABRTree();
-        HashTable table = new HashTable();
+    public static void main(String[] args) {
+        // Chemin du fichier de verbes
+        String cheminFichier = "C:\\Users\\qsqsq\\OneDrive\\Bureau\\ProjetAlgo\\ProjetMorphologie\\src\\ProjetMorphologieAlgo\\verbes.txt";
         
-        // 1. Lire le fichier et remplir l'arbre
         try {
-            BufferedReader lecteur = new BufferedReader(new FileReader(nomFichier));
-            String ligne;
-            while ((ligne = lecteur.readLine()) != null) {
-                ligne = ligne.trim();
-                if (ligne.length() >= 3) { // verbe de 3 lettres minimum
-                    arbre.insert(new Racine(ligne));
-                    System.out.println("Ajouté à l'arbre: " + ligne);
+            System.out.println("=== TEST DE L'APPLICATION DE MORPHOLOGIE ARABE ===\n");
+            
+            // 1. Créer et charger l'arbre depuis le fichier
+            System.out.println("ÉTAPE 1: Chargement des verbes depuis le fichier");
+            ABRTree arbre = new ABRTree();
+            arbre.chargerVerbesDepuisFichier(cheminFichier);
+            
+            // 2. Afficher toutes les racines
+            System.out.println("\nÉTAPE 2: Affichage des racines chargées");
+            arbre.afficherToutesRacines();
+            System.out.println("Nombre total de racines: " + arbre.count());
+            
+            // 3. Vérifier si certaines racines existent
+            System.out.println("\nÉTAPE 3: Vérification d'existence de racines");
+            String[] racinesATester = {"كتب", "درس", "فعل", "قرأ", "غيرموجود"};
+            
+            for (String racine : racinesATester) {
+                boolean existe = arbre.exists(racine);
+                System.out.println("Racine '" + racine + "' existe: " + existe);
+            }
+            
+            // 4. Initialiser la table de schèmes
+            System.out.println("\nÉTAPE 4: Initialisation des schèmes");
+            HashTable table = new HashTable();
+            table.afficherTous();
+            
+            // 5. Tests de transformation
+            System.out.println("\nÉTAPE 5: Tests de transformation morphologique");
+            
+            // Test 1: Transformer une racine existante
+            String racineTest = "كتب";
+            if (arbre.exists(racineTest)) {
+                System.out.println("\nTransformation de la racine: " + racineTest);
+                String[] schemes = {"فاعل", "مفعول", "افتعل"};
+                
+                List<String> formes = table.transformer(racineTest, schemes);
+                System.out.println("Schèmes appliqués: " + Arrays.toString(schemes));
+                System.out.println("Formes générées:");
+                for (int i = 0; i < formes.size(); i++) {
+                    System.out.println("  " + (i+1) + ". " + formes.get(i));
                 }
             }
-            lecteur.close();
+            
+            System.out.println("\nTransformation seul shema :");
+            String verbe=  "كتب";
+            System.out.println(table.transforme(verbe,"فاعل" ));
+            
+            // Test 2: Transformer plusieurs racines
+            System.out.println("\nTransformation de plusieurs shema:");
+          
+            String[] schemes = {"فاعل", "مفعول"};
+            
+            
+                if (arbre.exists(verbe)) {
+                    System.out.println("\n" + verbe + ":");
+                    List<String> formes = table.transformer(verbe, schemes);
+                    for (String forme : formes) {
+                        System.out.println("  → " + forme);
+                    }
+                }
+                System.out.println("\n=== TEST AJOUT ===");
+                table.ajouterScheme("استفعل"); // Génère automatiquement
+                table.ajouterScheme("تفعيل");   // Génère automatiquement
+                table.afficherTous();
+                
+                System.out.println("\n=== TEST MODIFICATION ===");
+                table.modifierScheme("مفعول", "مفعال"); // Change juste le nom
+                table.afficherTous();
+                
+                System.out.println("\n=== TEST SUPPRESSION ===");
+                table.supprimerScheme("مفعل");
+                table.afficherTous();
+                
+            
+            // 6. Test de recherche de racine
+            System.out.println("\nÉTAPE 6: Recherche de racines spécifiques");
+            Racine racineTrouvee = arbre.search("كتب");
+            if (racineTrouvee != null) {
+                System.out.println("Racine trouvée: " + racineTrouvee.getLettres());
+            }
+            
+            System.out.println("\n=== TESTS COMPLÉTÉS AVEC SUCCÈS ===");
+            
         } catch (IOException e) {
-            System.out.println("Problème avec le fichier: " + e.getMessage());
+            System.out.println("Erreur lors du chargement du fichier: " + e.getMessage());
         }
         
-        System.out.println("\n=== Début des transformations ===");
-        
-        
     }
- 
     
-   
- 
-    
-    
-    // Point d'entrée
-    public static void main(String[] args) {
-        // Chemin spécifique à votre projet
-    	 String cheminFichier = "C:\\Users\\qsqsq\\OneDrive\\Bureau\\ProjetAlgo\\ProjetMorphologie\\src\\ProjetMorphologieAlgo\\verbes.txt";
-        traiterFichier(cheminFichier);
-        String verbe = "كتب";
-        String[] mesSchemes = {"فاعل", "مفعول", "غيرموجود"}; // inclut un schème qui n'existe pas
-        HashTable ht = new HashTable();
-
-        List<String> formes = ht.transformer(verbe, mesSchemes);
-        System.out.println("Formes dérivées : " + formes);
-    }
 }
