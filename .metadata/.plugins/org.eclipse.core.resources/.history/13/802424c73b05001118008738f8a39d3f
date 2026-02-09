@@ -1,0 +1,95 @@
+package ProjetMorphologieAlgo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class HashTable {
+
+    // clé = nom du schème, valeur = liste de règles
+    private HashMap<String, List<String>> table;
+
+    public HashTable() {
+        table = new HashMap<>();
+        initialiserTable();
+    }
+
+    // Initialiser la table avec les schèmes arabes
+    private void initialiserTable() {
+        // Schème فاعل
+    	 List<String> reglesFaail = new ArrayList<>();
+         reglesFaail.add("V[0]اV[1]V[2]"); // faa'il
+         table.put("فاعل", reglesFaail);
+
+         // Schème مفعول
+         List<String> reglesMafoul = new ArrayList<>();
+         reglesMafoul.add("مV[0]V[1]وV[2]"); // maf'oul
+         table.put("مفعول", reglesMafoul);
+
+         // Schème افتعل
+         List<String> reglesIftaal = new ArrayList<>();
+         reglesIftaal.add("اV[0]تV[1]V[2]"); // ifta'ala
+         table.put("افتعل", reglesIftaal);
+        // Ajouter d'autres schèmes si nécessaire
+    }
+
+    // ajouter un schème et ses règles
+    public void put(String key, List<String> rules) {
+        table.put(key, rules);
+    }
+
+    // récupérer les règles d'un schème
+    public List<String> getRules(String key) {
+        return table.get(key);
+    }
+
+    // Transformer un verbe selon un schème donné
+    public String transformer(String verbe, String scheme) {
+     
+
+        // Convertir le verbe en tableau de caractères
+        char[] radicales = verbe.toCharArray();
+        
+        // Récupérer les règles du schème
+        List<String> regles = table.get(scheme);
+        
+      
+
+        // Appliquer la première règle (pour simplifier, on prend la première)
+        String regle = regles.get(0);
+        
+        // Remplacer les placeholders par les radicales
+        String resultat = regle
+            .replace("V[0]", String.valueOf(radicales[0]))
+            .replace("V[1]", String.valueOf(radicales[1]))
+            .replace("V[2]", String.valueOf(radicales[2]));
+        
+        return resultat;
+    }
+
+    // Méthode utilitaire pour afficher tous les schèmes disponibles
+    public void afficherSchemes() {
+        System.out.println("Schèmes disponibles:");
+        for (String scheme : table.keySet()) {
+            System.out.println("- " + scheme + " : " + table.get(scheme));
+        }
+    }
+    public static void main(String[] args) {
+        HashTable table = new HashTable();
+        
+        // Afficher les schèmes disponibles
+        table.afficherSchemes();
+        
+        // Tester la transformation
+        String verbe = "فعل"; // verbe trilitère de base
+        
+        try {
+            System.out.println("\nTransformations du verbe: " + verbe);
+            System.out.println("فاعل: " + table.transformer(verbe, "فاعل"));
+            System.out.println("مفعول: " + table.transformer(verbe, "مفعول"));
+            System.out.println("افتعل: " + table.transformer(verbe, "افتعل"));
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erreur: " + e.getMessage());
+        }
+    }
+}
